@@ -1,0 +1,16 @@
+{
+  "name": "ipfs-test0",
+  "type": "module",
+  "version": "1.0.0",
+  "description": "",
+  "main": "test.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "glob": "^7.2.0",
+    "ipfs-core": "^0.11.1"
+  }
+}
