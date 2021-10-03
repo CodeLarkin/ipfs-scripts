@@ -4,10 +4,7 @@ import fs from 'fs';
 
 
 const ipfs = create()
-let services = await ipfs.pin.remote.service.ls()
-if (services[0].service != 'pinata') {
-    await ipfs.pin.remote.service.add('pinata', { endpoint: 'https://api.pinata.cloud', key: `${process.env.PINATA_JWT}` })
-}
+
 console.log("Available services:")
 console.log(await ipfs.pin.remote.service.ls())
 
@@ -17,27 +14,29 @@ const ipfsAddOptions = {
 }
 const numNFTs = 2 //1000
 
-// Load all images into memory
+console.log("Load all images from file into memory...")
 let files = []
 let results = []
 for (let i = 0; i < numNFTs; i++) {
     console.log(`Processing image ${i}...`)
     const fname = `./images/${i}.png`
     const img = fs.readFileSync(fname)
-    const fileObj = { path: `/skullys/${i}`, content: img }
+    const fileObj = { path: `/images/${i}`, content: img }
     files.push(fileObj)
 }
 
-// Add all of the files and store off the root CID
-let rootCID;
+console.log("Adding all of the files to IPFS and storing off the root CID...")
+let rootCID
 for await (const res of ipfs.addAll(files, ipfsAddOptions)) {
-    if (res.path == 'skullys') {
+    if (res.path == 'images') {
         rootCID = res.cid.toString()
     }
     console.log(res)
+    console.log("Pinning...")
+    console.log(await ipfs.pin.remote.add(res.cid, { service: 'pinata' }))
 }
 
-// Update all of the metadatas
+console.log("Updating all metadata files and writing to ./gen-metas/ ...")
 for (let i = 0; i < numNFTs; i++) {
     let meta = JSON.parse(fs.readFileSync(`./metas/${i}.json`, 'utf-8'))
     meta.image = `ipfs://${rootCID}/${i}`

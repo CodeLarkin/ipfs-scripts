@@ -26,11 +26,20 @@ const numNFTs = 2 //1000
 let results = []
 for (let i = 0; i < numNFTs; i++) {
     console.log(`Processing image ${i}...`)
-    const fname = './images/' + i + '.png'
+    const fname = `./images/${i}.png`
     const img = fs.readFileSync(fname)
-    const res = await ipfs.add(img, ipfsAddOptions)
+    const fileObj = { path: `/skullys/${i}`, content: img }
+    const { path, cid } = await ipfs.add(fileObj, ipfsAddOptions)
+    console.log(cid)
     //console.log(res)
-    results.push(res)
+    //var meta = require(`metas/${i}.json`)
+    let meta = JSON.parse(fs.readFileSync(`./metas/${i}.json`, 'utf-8'))
+    meta.image = `ipfs://${path}`
+
+    let updatedMeta = JSON.stringify(meta);
+    fs.writeFileSync(`./gen-metas/${i}`, updatedMeta);
+
+    results.push(path)
 }
 
 console.log(results)
