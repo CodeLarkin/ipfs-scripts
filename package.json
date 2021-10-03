@@ -10,7 +10,9 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "glob": "^7.2.0",
-    "ipfs-core": "^0.11.1"
+    "glob": "^7.2.0"
+  },
+  "devDependencies": {
+    "ipfs-http-client": "^53.0.1"
   }
 }
