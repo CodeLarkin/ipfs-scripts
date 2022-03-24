@@ -3,7 +3,7 @@ import { create } from 'ipfs-http-client';
 import fs from 'fs';
 
 
-const ipfs = create()
+const ipfs = create();
 
 (async () => {
 
@@ -11,10 +11,10 @@ const ipfs = create()
     console.log(await ipfs.pin.remote.service.ls())
 
     const ipfsAddOptions = {
-      cidVersion: 1,
+      cidVersion: 0,
       hashAlg: 'sha2-256'
     }
-    const numNFTs = 1000
+    const numNFTs = 8888  //8888
 
     console.log("Load all metas from file into memory...")
     let files = []
@@ -31,7 +31,7 @@ const ipfs = create()
     console.log("Adding all of the files to IPFS...")
     let rootCID;
     for await (const res of ipfs.addAll(files, ipfsAddOptions)) {
-        console.log(`Processing ${j}`)
+        //console.log(`Processing ${j}`)
         j++
         if (res.path == 'metas') {
             rootCID = res.cid.toString()

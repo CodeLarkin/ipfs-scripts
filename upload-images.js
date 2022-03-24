@@ -15,16 +15,26 @@ const ipfs = create();
       cidVersion: 1,
       hashAlg: 'sha2-256'
     }
-    const numNFTs = 1000
+
+    const totalNFTs = 8888
+    const revealNFTs = 8888
 
     console.log("Load all images from file into memory...")
     let files = []
     let results = []
-    for (let i = 1; i <= numNFTs; i++) {
+    for (let i = 1; i <= revealNFTs; i++) {
         console.log(`Processing image ${i}...`)
         const fname = `./images/${i}.png`
         const img = fs.readFileSync(fname)
         const fileObj = { path: `/images/${i}`, content: img }
+        files.push(fileObj)
+    }
+
+    if (revealNFTs < totalNFTs) {
+        console.log(`Processing default...`)
+        const fname = `./images/default.png`
+        const img = fs.readFileSync(fname)
+        const fileObj = { path: `/images/default`, content: img }
         files.push(fileObj)
     }
 
@@ -35,8 +45,10 @@ const ipfs = create();
         console.log(`Processing ${j}`)
         j++
         if (res.path == 'images') {
+            console.log('Pinning rootCID...')
             rootCID = res.cid.toString()
         }
+        if (res.path == 'images') {
         console.log(`Async pinning: '${res.cid.toString()}'...`)
         try {
             let pinResult = await ipfs.pin.remote.add(res.cid, { service: 'pinata' })
@@ -44,12 +56,17 @@ const ipfs = create();
         } catch {
             console.log("FAIL: possibly already pinned!")
         }
+        }
     }
 
     console.log("Updating all metadata files and writing to ./gen-metas/ ...")
-    for (let i = 1; i <= numNFTs; i++) {
-        let meta = JSON.parse(fs.readFileSync(`./metas/${i}.json`, 'utf-8'))
-        meta.image = `ipfs://${rootCID}/${i}`
+    for (let i = 1; i <= totalNFTs; i++) {
+        let fname = i;
+        if (i > revealNFTs) {
+            fname = "default"
+        }
+        let meta = JSON.parse(fs.readFileSync(`./metas/${fname}.json`, 'utf-8'))
+        meta.image = `ipfs://${rootCID}/${fname}`
         meta.name = `#${i}`
         meta.edition = `${i}`
 
