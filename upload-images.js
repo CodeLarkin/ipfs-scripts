@@ -16,8 +16,8 @@ const ipfs = create();
       hashAlg: 'sha2-256'
     }
 
-    const totalNFTs = 8888
-    const revealNFTs = 8888
+    const totalNFTs = 5000
+    const revealNFTs = 5000
 
     console.log("Load all images from file into memory...")
     let files = []
@@ -47,15 +47,14 @@ const ipfs = create();
         if (res.path == 'images') {
             console.log('Pinning rootCID...')
             rootCID = res.cid.toString()
-        }
-        if (res.path == 'images') {
-        console.log(`Async pinning: '${res.cid.toString()}'...`)
-        try {
-            let pinResult = await ipfs.pin.remote.add(res.cid, { service: 'pinata' })
-            console.log(pinResult)
-        } catch {
-            console.log("FAIL: possibly already pinned!")
-        }
+
+            console.log(`Async pinning: '${res.cid.toString()}'...`)
+            try {
+                let pinResult = await ipfs.pin.remote.add(res.cid, { service: 'pinata' })
+                console.log(pinResult)
+            } catch {
+                console.log("FAIL: possibly already pinned!")
+            }
         }
     }
 

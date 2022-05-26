@@ -11,10 +11,10 @@ const ipfs = create();
     console.log(await ipfs.pin.remote.service.ls())
 
     const ipfsAddOptions = {
-      cidVersion: 0,
+      cidVersion: 1,
       hashAlg: 'sha2-256'
     }
-    const numNFTs = 8888  //8888
+    const numNFTs = 5000;
 
     console.log("Load all metas from file into memory...")
     let files = []
@@ -36,13 +36,14 @@ const ipfs = create();
         if (res.path == 'metas') {
             rootCID = res.cid.toString()
             console.log("ROOT: " + rootCID)
-        }
-        console.log(`Async pinning: '${res.cid.toString()}'...`)
-        try {
-            let pinResult = await ipfs.pin.remote.add(res.cid, { service: 'pinata' })
-            console.log(pinResult)
-        } catch {
-            console.log("FAIL: possibly already pinned!")
+
+            console.log(`Async pinning: '${res.cid.toString()}'...`)
+            try {
+                let pinResult = await ipfs.pin.remote.add(res.cid, { service: 'pinata' })
+                console.log(pinResult)
+            } catch {
+                console.log("FAIL: possibly already pinned!")
+            }
         }
     }
 
