@@ -14,12 +14,13 @@ const ipfs = create();
       cidVersion: 1,
       hashAlg: 'sha2-256'
     }
+    const startId = 0;
     const numNFTs = 5000;
 
     console.log("Load all metas from file into memory...")
     let files = []
     let results = []
-    for (let i = 1; i <= numNFTs; i++) {
+    for (let i = startId; i < numNFTs + startId; i++) {
         console.log(`Processing image ${i}...`)
         const fname = `./gen-metas/${i}.json`
         const img = fs.readFileSync(fname)
@@ -27,12 +28,12 @@ const ipfs = create();
         files.push(fileObj)
     }
 
-    let j = 1
+    let j = startId;
     console.log("Adding all of the files to IPFS...")
     let rootCID;
     for await (const res of ipfs.addAll(files, ipfsAddOptions)) {
-        //console.log(`Processing ${j}`)
-        j++
+        console.log(`Processing ${j}`)
+        j++;
         if (res.path == 'metas') {
             rootCID = res.cid.toString()
             console.log("ROOT: " + rootCID)

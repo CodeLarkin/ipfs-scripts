@@ -16,15 +16,16 @@ const ipfs = create();
       hashAlg: 'sha2-256'
     }
 
+    const startId = 0;
     const totalNFTs = 5000
     const revealNFTs = 5000
 
     console.log("Load all images from file into memory...")
     let files = []
     let results = []
-    for (let i = 1; i <= revealNFTs; i++) {
+    for (let i = startId; i < revealNFTs + startId; i++) {
         console.log(`Processing image ${i}...`)
-        const fname = `./images/${i}.png`
+        const fname = `./build/images/${i}.png`
         const img = fs.readFileSync(fname)
         const fileObj = { path: `/images/${i}`, content: img }
         files.push(fileObj)
@@ -32,13 +33,13 @@ const ipfs = create();
 
     if (revealNFTs < totalNFTs) {
         console.log(`Processing default...`)
-        const fname = `./images/default.png`
+        const fname = `./build/images/default.png`
         const img = fs.readFileSync(fname)
         const fileObj = { path: `/images/default`, content: img }
         files.push(fileObj)
     }
 
-    let j = 1
+    let j = startId;
     console.log("Adding all of the files to IPFS and storing off the root CID...")
     let rootCID
     for await (const res of ipfs.addAll(files, ipfsAddOptions)) {
@@ -59,12 +60,12 @@ const ipfs = create();
     }
 
     console.log("Updating all metadata files and writing to ./gen-metas/ ...")
-    for (let i = 1; i <= totalNFTs; i++) {
+    for (let i = startId; i < totalNFTs + startId; i++) {
         let fname = i;
         if (i > revealNFTs) {
             fname = "default"
         }
-        let meta = JSON.parse(fs.readFileSync(`./metas/${fname}.json`, 'utf-8'))
+        let meta = JSON.parse(fs.readFileSync(`./build/json/${fname}.json`, 'utf-8'))
         meta.image = `ipfs://${rootCID}/${fname}`
         meta.name = `#${i}`
         meta.edition = `${i}`
